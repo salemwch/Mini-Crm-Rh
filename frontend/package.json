@@ -1,0 +1,70 @@
+{
+  "resolutions": {
+    "date-fns": "2.30.0"
+  },
+  "name": "frontend-stage-project",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.10.0",
+    "bootstrap": "^5.3.7",
+    "chart.js": "^4.5.0",
+    "date-fns": "^2.30.0",
+    "framer-motion": "^12.23.0",
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
+    "keen-slider": "^6.8.6",
+    "lottie-react": "^2.4.1",
+    "react": "^19.1.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-date-range": "^1.4.0",
+    "react-dom": "^19.1.0",
+    "react-dropzone": "^14.3.8",
+    "react-hot-toast": "^2.5.2",
+    "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.6.3",
+    "react-scripts": "^5.0.1",
+    "react-slick": "^0.30.3",
+    "react-toastify": "^11.0.5",
+    "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.8.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/react-date-range": "^1.4.10",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwind-scrollbar": "^3.1.0",
+    "tailwindcss": "^3.4.1"
+  }
+}

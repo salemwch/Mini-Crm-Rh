@@ -1,0 +1,69 @@
+/* EmailVerified.css */
+
+.email-verified-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom right, #e0f2fe, #f0f9ff);
+    padding: 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .email-verified-card {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    border-top: 8px solid var(--status-color);
+    max-width: 420px;
+    width: 100%;
+    animation: fadeInUp 0.5s ease-out;
+  }
+  
+  .email-verified-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+  }
+  
+  .email-verified-message {
+    color: #6b7280;
+    font-size: 1rem;
+  }
+  
+  .email-verified-button {
+    margin-top: 1.5rem;
+    display: inline-block;
+    background-color: #2563eb;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .email-verified-button:hover {
+    background-color: #1d4ed8;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  :root {
+    --green-color: #10b981;
+    --yellow-color: #f59e0b;
+    --red-color: #ef4444;
+  }
+  

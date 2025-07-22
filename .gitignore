@@ -1,0 +1,67 @@
+# === GLOBAL ===
+# System files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Env files
+.env
+.env.*
+
+
+# === NODE / BACKEND (NestJS) ===
+backend/node_modules/
+backend/dist/
+backend/.env
+backend/.env.*
+backend/coverage/
+backend/package-lock.json # optional if team uses yarn/pnpm
+
+# Local Nest CLI config
+backend/.nestjs-cli.json
+backend/.cache/
+backend/.turbo/
+backend/*.tsbuildinfo
+
+
+# === FRONTEND (React) ===
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.*
+frontend/.vite
+frontend/.next
+frontend/coverage/
+
+# React test artifacts
+frontend/junit.xml
+frontend/report.html
+
+# React cache
+frontend/.parcel-cache/
+frontend/.cache/
+frontend/.turbo/
+frontend/*.tsbuildinfo
+
+
+# === EDITORS ===
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+
+# === OS ===
+*.swp
+*.bak
+*.tmp
+
+# === FILE UPLOADS (OPTIONAL) ===
+uploads/
+tmp/

@@ -1,0 +1,25 @@
+
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden !important;
+  background-color: #f7f9fc;
+}
+
+
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientFlow 10s ease infinite;
+}
