@@ -1,8 +1,8 @@
-// components/MenuItem.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default function MenuItem({ icon, label, isOpen, to, onClick }) {
+export default function MenuItem({ icon, label, isOpen, to, onClick}) {
+    
   return (
     <li
       onClick={onClick}

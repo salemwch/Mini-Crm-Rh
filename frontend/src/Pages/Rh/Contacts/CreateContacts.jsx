@@ -1,14 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { getMyEnterprises } from "../../../service/interprise";
 import { createContact } from "../../../service/Contact";
-import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
-import { AuthContext } from "../../../components/AuthProvider";
+
 
 const CreateContacts = () => {
   const [myEnterprises, setMyEnterprises] = useState([]);
-  const { enterpriseId } = useParams();
-  const {user} = useContext(AuthContext)
+  const [successMessage, setSuccessMessage] = useState('');
 
   const [form, setForm] = useState({
     name: "",
@@ -26,7 +23,6 @@ const CreateContacts = () => {
     const fetchMyEnterprises = async () => {
       try {
         const data = await getMyEnterprises();
-        console.log(data);
         setMyEnterprises(data);
         if (data.length > 0) {
           setForm((prev) => ({ ...prev, enterpriseId: data[0]._id }));
@@ -51,8 +47,7 @@ const CreateContacts = () => {
   const handleSubmit = async () => {
     try {
       await createContact(form);
-      console.log(form);
-      toast.success("Contact created successfully");
+    setSuccessMessage('Contact created successfully!');
       setForm({
         name: "",
         email: "",
@@ -60,11 +55,10 @@ const CreateContacts = () => {
         position: "",
         preferedContactMethod: "email",
         isActive: true,
-        enterprise: enterpriseId,
+        enterpriseId: form.enterpriseId,
       });
     } catch (err) {
-      toast.error(err.message || "Failed to create contact");
-      console.log(err)
+      setError(err.message || "Failed to create contact");
     }
   };
 
@@ -156,8 +150,8 @@ const CreateContacts = () => {
                       value={form.preferedContactMethod}
                       onChange={handleChange}
                     >
-                      <option value="EMAIL">Email</option>
-                      <option value="PHONE">Phone</option>
+                      <option value="email">Email</option>
+                      <option value="phone">Phone</option>
                     </select>
                   </div>
 
@@ -199,6 +193,17 @@ const CreateContacts = () => {
                 >
                   Save Contact
                 </button>
+         {successMessage && (
+  <div className="mt-2 text-success">
+    {successMessage}
+  </div>
+)}
+{error && (
+  <div className="mt-2 text-danger">
+    {error}
+  </div>
+)}
+
               </form>
             </div>
           </div>

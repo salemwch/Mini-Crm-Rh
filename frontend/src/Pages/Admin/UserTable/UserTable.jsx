@@ -3,6 +3,7 @@ import { activeAccount, approveUser, deleteAccount, desactiveAccount, getAllUser
 import { toast} from "react-toastify";
 import { FaSearch } from "react-icons/fa";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import { User } from "lucide-react";
 
 export default function UsersTable() {
 
@@ -176,8 +177,9 @@ export default function UsersTable() {
   <table className="table w-full text-base bg-white">
     <thead className="bg-gradient-to-l from-cyan-900 to-sky-500 text-white shadow-md">
       <tr>
-        <th className="px-4 py-3 text-left font-semibold tracking-wider">#</th>
-        <th className="px-4 py-3 text-left font-semibold tracking-wider">Full Name</th>
+<th className="px-4 py-3 text-left font-semibold tracking-wider">
+  <User className="inline-block w-5 h-5 text-gray-600" />
+</th>        <th className="px-4 py-3 text-left font-semibold tracking-wider">Full Name</th>
         <th className="px-4 py-3 text-left font-semibold tracking-wider">Email</th>
         <th className="px-4 py-3 text-left font-semibold tracking-wider">Role</th>
         <th className="px-4 py-3 text-left font-semibold tracking-wider">Status</th>
@@ -188,12 +190,12 @@ export default function UsersTable() {
     <tbody>
       {users.map((user, index) => (
         <tr key={user._id} className="hover:bg-gray-50 transition-colors duration-200 ease-in-out border-b border-gray-100">
-          <td className="px-4 py-3 text-gray-700 font-medium">{index + 1}</td>
-          <td className="px-4 py-3 text-gray-900 font-semibold">{user.name}</td>
-          <td className="px-4 py-3  hover:underline text-decoration-none ">{user.email}</td>
-          <td className="px-4 py-3">
+          <td className="px-2 py-3 text-gray-700 font-medium">{index + 1}</td>
+          <td className="px-2 py-3 text-gray-900 font-semibold">{user.name}</td>
+          <td className="px-2 py-3  hover:underline text-decoration-none ">{user.email}</td>
+          <td className="px-2 py-3">
             <span className={`
-    badge badge-lg text-white font-medium shadow-sm capitalize px-3 py-1 rounded-full
+    badge badge-lg text-white font-medium shadow-sm capitalize px-2 py-1 rounded-full
     ${user.role === 'admin' ? 'bg-purple-600' :
       user.role === 'rh' ? 'bg-teal-500' :
       'badge-primary'}
@@ -201,7 +203,7 @@ export default function UsersTable() {
     {user.role}
   </span>
           </td>
-          <td className="px-4 py-3  flex flex-col space-y-1">
+          <td className="px-2 py-3  flex flex-col space-y-1">
             <span className={`badge badge-sm font-semibold ${user.isActive ? 'badge-success' : 'badge-danger bg-red-700 text-white-700 border-gray-300'} px-2 py-1 rounded-full`}>
               {user.isActive ? 'Active' : 'Inactive'}
             </span>
@@ -212,7 +214,7 @@ export default function UsersTable() {
               {user.isApproved ? 'Approved' : 'Pending'}
             </span>
           </td>
-          <td className="px-4 py-3">
+          <td className="px-2 py-3">
             <div className="flex flex-wrap gap-2 ">
               <button className="btn btn-sm btn-outline btn-info hover:bg-info  hover:text-white transition-all duration-200">
                 Details

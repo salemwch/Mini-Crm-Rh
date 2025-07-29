@@ -14,9 +14,9 @@ const JobOfferByEnterprise= () =>{
     useEffect(() =>{
 
         const fetchJobOffer = async () =>{
+
             try{
                 const offers = await getJobOffersByEnterprise(id);
-console.log('Enterprise ID used in fetch:', id);
                 setJobOffers(offers);
             }catch(error){
                 setError("failed to load jobOffer info");

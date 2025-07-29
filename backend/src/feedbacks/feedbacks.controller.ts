@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, UseGuards, Query, Req, ForbiddenException } from '@nestjs/common';
 import { FeedbacksService } from './feedbacks.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { UpdateFeedbackDto } from './dto/update-feedback.dto';
@@ -9,28 +9,32 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { AccessTokenGuards } from 'src/guards/accessToken.guards';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { PaginiationQueryDto } from 'src/common/dto/paginationQuery.dto';
-
+import { Logger } from '@nestjs/common';
+interface JwtPayloadWithRole {
+  sub: string;
+  email: string;
+  role: UserRole;
+}
+interface RequestWithUser extends Request {
+  user? : JwtPayloadWithRole;
+}
 @Controller('feedbacks')
 export class FeedbacksController {
+  private readonly logger = new Logger(FeedbacksController.name);
   constructor(private readonly feedbacksService: FeedbacksService) {}
 
   @Post('create')
+  @UseGuards(AccessTokenGuards)
   @Roles(UserRole.ADMIN, UserRole.RH)
-  async create(@Res() response: Response, @Body() createFeedBackDto: CreateFeedbackDto): Promise<Response>{
-    try{
-      const createFeedback = await this.feedbacksService.createFeedback(createFeedBackDto);
-      return response.status(HttpStatus.CREATED).json({
-        message: 'feedbacks created successfully',
-        createFeedback,
-        statusCode: 201,
-      });
-    }catch(error){
-      return response.status(HttpStatus.BAD_REQUEST).json({
-        message: 'something went wrong when creating feeback please try again later',
-        error: (error as Error).message,
-        statusCode: 400,
-      });
+  create(@Body() createFeedbackDto: CreateFeedbackDto, @Req() req: RequestWithUser) {
+    this.logger.debug(`Creating feedback for user ID: ${req.user?.sub}`);
+    const userId = req.user?.sub;
+    this.logger.debug(`Creating feedback for user ID: ${userId}`);
+    if(!userId){
+      throw new ForbiddenException('User not found');
     }
+    this.logger.error(`Creating feedback for user ID: ${userId}`);
+    return this.feedbacksService.createFeedback(createFeedbackDto, userId);
   }
 
   @Get()
@@ -87,7 +91,7 @@ export class FeedbacksController {
       });
     }
   }
-  @Patch('id')
+  @Patch('update/:id')
   @Roles(UserRole.ADMIN, UserRole.RH)
     async updatefeedBack(@Res() response: Response, @Param('id') id: string, @Body() updateFeedbackDto: UpdateFeedbackDto ):Promise<Response>{
       try{
@@ -135,6 +139,16 @@ export class FeedbacksController {
     async findAllfeedbacks(@Query() query : PaginiationQueryDto){
       return this.feedbacksService.findAllFeedbacks(query);
     }
-  
+  @Get('by-enterprise/:enterpriseId')
+  getFeedbacksByEnterprise(@Param('enterpriseId') enterpriseId: string) {
+    return this.feedbacksService.getByEnterprise(enterpriseId);
+  }
+  @UseGuards(AccessTokenGuards)
+  @Roles(UserRole.ADMIN, UserRole.RH)
+  @Get('last-5')
+  getLastFiveFeedbacks() {
+    return this.feedbacksService.getLastFiveFeedbacks();
+  }
+
 }
 

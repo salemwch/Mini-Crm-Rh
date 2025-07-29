@@ -15,11 +15,11 @@ export class User {
   role: UserRole;
   @Prop({ default: true })
   isActive: boolean;
-  @Prop({ type: Types.ObjectId, ref: 'Enterprise', required: true })
+  @Prop({ type: Types.ObjectId, ref: 'Enterprise', required: false })
   enterprise: Types.ObjectId;
   @Prop()
   phoneNumber: string;
-  @Prop()
+  @Prop({ type: Date, default: null })
   lastSeen: Date;
   @Prop()
   image: string;

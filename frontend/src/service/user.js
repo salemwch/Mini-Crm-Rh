@@ -156,3 +156,19 @@ export const approveUser = async (id) => {
     throw error.response?.data || error;
   }
 };
+export const getUsersByRole = async (role) => {
+  try {
+    const response = await HTTP.get(`/user/role/${role}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+export const getEnterpriseByUserId = async (userId) => {
+  try {
+    const response = await HTTP.get(`/user/user/${userId}/enterprise`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};

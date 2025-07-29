@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getEnterpriseById } from '../../../service/interprise';
+import { getEnterprisesById } from '../../../service/interprise';
 import EnterpriseInfo from './EnterpriseInfo';
+import TopBanner from '../../../components/TopBar';
 
 const EnterpriseInfoPage = () => {
   const { id } = useParams();
@@ -13,7 +14,7 @@ const EnterpriseInfoPage = () => {
   useEffect(() => {
     const fetchEnterprise = async () => {
       try {
-        const data = await getEnterpriseById(id);
+        const data = await getEnterprisesById(id);
         setEnterprise(data.findEnterpriseById || data);
         setError(null);
       } catch (err) {
@@ -31,6 +32,8 @@ const EnterpriseInfoPage = () => {
   if (!enterprise) return <p>No enterprise found</p>;
 
   return (
+    <>
+    <TopBanner/>
     <div className="max-w-4xl mx-auto p-8 mt-20 bg-white rounded-3xl shadow-md">
   <div className="flex justify-between items-center mb-4 space-x-2">
     <button 
@@ -42,10 +45,11 @@ const EnterpriseInfoPage = () => {
 
    
   </div>
+  
 
   <EnterpriseInfo enterprise={enterprise} />
 </div>
-
+</>
   );
 };
 

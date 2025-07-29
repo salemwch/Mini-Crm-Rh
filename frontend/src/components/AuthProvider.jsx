@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
         await refreshToken();
         const currentUser = await getMe();
         setUser(currentUser);
-console.log('Current user:', currentUser);
 
       } catch (error) {
         setUser(null);

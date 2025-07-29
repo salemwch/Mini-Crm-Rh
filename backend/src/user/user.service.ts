@@ -14,13 +14,9 @@ import { isValidObjectId, Model, Types } from 'mongoose';
 import { User, UserDocument } from './entities/user.schema';
 import { CreateUserDto, UserRole } from './dto/create-user.dto';
 import { IUser } from './interface/interface';
-import { UpdateUserDto } from './dto/update_user.dto';
 import { UpdateUserRole } from './dto/updateUserRole';
-import { EnterpriseService } from 'src/enterprise/enterprise.service';
 import { MailService } from 'src/MailTrap/mail.service';
 import { Request } from 'express';
-import { ContactService } from 'src/contact/contact.service';
-import { FeedbacksService } from 'src/feedbacks/feedbacks.service';
 import { AuditLogService } from 'src/AuditLogs/audit.service';
 @Injectable()
 export class UserService {
@@ -43,6 +39,7 @@ export class UserService {
       ...createUserDto,
       password: hash,
       role: assignedRole,
+      lastSeen: null,
       isApproved: assignedRole === UserRole.ADMIN ? true : false,
       isEmailVerified: false,
     });
@@ -78,7 +75,7 @@ export class UserService {
   
   async update(
     id: string,
-    updateduserdto: UpdateUserDto,
+    updateduserdto: Partial<User>,
   ): Promise<IUser | null> {
     if (updateduserdto.password) {
       updateduserdto.password = await argon2.hash(updateduserdto.password);
@@ -176,7 +173,7 @@ export class UserService {
     return  !!admin;
   }
   async getMe(userId: string) {
-    const user = await this.userModel.findById(userId).select('email role name image createdAt updatedAt isActive isEmailVerified isApproved').lean();
+    const user = await this.userModel.findById(userId).populate('enterprise').select('email role name image createdAt updatedAt isActive isEmailVerified isApproved lastSeen').lean();
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -192,6 +189,8 @@ export class UserService {
       isActive: user.isActive,
       isApproved: user.isApproved,
       isEmailVerified: user.isEmailVerified,
+      lastSeen: user.lastSeen,
+      enterprise: user.enterprise?._id || null,
     };
   }
   async getAllUsersFiltered(filters: {
@@ -260,11 +259,26 @@ export class UserService {
       });
 
       return savedUser;
-
-
     }
-    
+  
     async getRecenUsers(limit: number){
       return this.userModel.find({}, {name: 1, email:1, status:1 ,createdAt: 1}).sort({createdAt: -1}).limit(limit);
     }
+  async findUsersByRole(role: UserRole): Promise<User[]> {
+    const users = await this.userModel.find({ role }).exec();
+
+    if (!users || users.length === 0) {
+      throw new NotFoundException(`No users found with role '${role}'`);
+    }
+
+    return users;
+  }
+  async getUserEnterprise(userId: string) {
+    const user = await this.userModel.findById(userId).populate('enterprise');
+    if (!user || !user.enterprise) {
+      throw new NotFoundException('Enterprise not found for this user');
+    }
+    return user.enterprise;
+  }
 }
+

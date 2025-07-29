@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsEnum,
@@ -34,7 +35,8 @@ export class CreateUserDto {
   @IsString()
   @ApiProperty()
   phoneNumber?: string;
-  refreshToken:  string |null;
-  @ApiProperty({ type: 'string', format: 'binary' })
-  image: any;
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  @IsOptional()
+  @IsString()
+  image?: string;
 }

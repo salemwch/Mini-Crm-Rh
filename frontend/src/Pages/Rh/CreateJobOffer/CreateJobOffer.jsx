@@ -96,7 +96,13 @@ const CreateJobOfferForm = () => {
 
               {successMessage && <div className="alert alert-success">{successMessage}</div>}
 
-              {error && <div className="alert alert-danger">{error}</div>}
+{error && (
+  <div className="alert alert-danger">
+    {Array.isArray(error)
+      ? error.map((e, idx) => <p key={idx}>{e.constraints ? Object.values(e.constraints).join(', ') : JSON.stringify(e)}</p>)
+      : error.toString()}
+  </div>
+)}
 
               {!isLoading && (
                 <form onSubmit={handleSubmit}>

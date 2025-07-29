@@ -13,6 +13,7 @@ import { DocumentModule } from './document/document.module';
 import { DahboardModule } from './dahboard/dahboard.module';
 import { AbsenceModule } from './Absence/absence.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { EventModule } from './Events/event.Module';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         autoIndex: process.env.NODE_ENV === 'development',
       }
     ),
-    MailModule, AuthModule, UserModule, EnterpriseModule, ContactModule, FeedbacksModule, DocumentModule, DahboardModule,AbsenceModule],
+    MailModule, AuthModule, UserModule, EnterpriseModule, ContactModule, FeedbacksModule, DocumentModule, DahboardModule,AbsenceModule,EventModule],
   controllers: [AppController],
   providers: [AppService],
 })

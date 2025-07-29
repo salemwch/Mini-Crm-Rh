@@ -17,7 +17,6 @@ const [formData, setFormData] = useState({
   password: "",
   role: "rh",
 });
-
 const [imageFile, setImageFile] = useState(null);
 const [adminExisting, setAdminExisting] = useState(false);
 const [error, setError] = useState("");
@@ -88,13 +87,6 @@ const handleSubmit = async (e) => {
     setError(error.message || "Failed to create user. Please try again later.");
   }
 };
-
-
-
-
-
-
-
     return (
         <div className="content">
             <div className="container">
@@ -129,8 +121,13 @@ const handleSubmit = async (e) => {
                                     Admin Role Creation disabled (admin already exists)
                                 </small>
                             )}
-                            {error && <p className="text-danger small mt-2">{error}</p>}
-
+{error && (
+  <div className="text-danger small mt-2">
+    {Array.isArray(error)
+      ? error.map((e, idx) => <p key={idx}>{e.constraints ? Object.values(e.constraints).join(', ') : JSON.stringify(e)}</p>)
+      : error.toString()}
+  </div>
+)}
                         </div>
                     </div>
 

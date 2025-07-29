@@ -45,10 +45,9 @@ export class EnterpriseController {
     }
   }
   @UseGuards(AccessTokenGuards)
-
   @Roles(UserRole.ADMIN, UserRole.RH)
   @Get()
-  async findAll(@Res() response): Promise<Response>{
+  async findAll(@Res() response: Response): Promise<Response>{
     try{
       const findAllEnterprise = await this.enterpriseService.findAll();
       return response.status(HttpStatus.OK).json({
@@ -57,7 +56,7 @@ export class EnterpriseController {
         statusCode: 200,
       });
     }catch(error){
-      return response.statsuCode(HttpStatus.BAD_REQUEST).json({
+      return response.status(HttpStatus.BAD_REQUEST).json({
         message: 'something went wrong when fetching all enterprises please try again later',
         error: (error as Error).message,
         statusCode: 400,
@@ -84,10 +83,9 @@ export class EnterpriseController {
     }
   }
   @UseGuards(AccessTokenGuards)
-
   @Roles(UserRole.ADMIN, UserRole.RH)
   @Patch('update-enterprise/:id')
-  async updateEnterprise(@Res() response: Response, @Param('') id:string, @Body() dto: UpdateEnterpriseDto): Promise<Response>{
+  async updateEnterprise(@Res() response: Response, @Param('id') id:string, @Body() dto: UpdateEnterpriseDto): Promise<Response>{
     try{
       const updateUnterprise = await this.enterpriseService.updateEnterPrise(id, dto);
       return response.status(HttpStatus.ACCEPTED).json({
@@ -180,6 +178,12 @@ export class EnterpriseController {
     }
     return this.enterpriseService.getEnterprisesByUser(userId);
   }
-
-
+  @Get('with-contacts')
+  async getWithContacts() {
+    return this.enterpriseService.getEnterprisesWithContacts();
+  }
+  @Get('/with-feedbacks')
+  async getEnterprisesWithFeedbacks() {
+    return this.enterpriseService.getEnterprisesWithFeedbacks();
+  }
 }

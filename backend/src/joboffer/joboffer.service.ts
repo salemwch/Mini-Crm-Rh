@@ -113,4 +113,16 @@ export class JobOfferService {
     const offer =  this.jobOfferModel.find({ enterpriseId: enterpriseObjectId }).populate('enterpriseId').exec();
     return offer;
   }
+
+  async getLastFiveJobOffers(): Promise<JobOffer[]> {
+    return this.jobOfferModel
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate([
+        { path: 'addBy', select: 'name email' },
+        { path: 'enterpriseId', select: 'name' },
+      ])
+      .exec();
+  }
 }

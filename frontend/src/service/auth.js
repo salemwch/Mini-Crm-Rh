@@ -88,7 +88,6 @@ export const getMe = async () => {
     }
   };
   export const refreshToken = async () => {
-    console.log("[refreshToken] trying to call /auth/refresh-token");
   
     try {
       const response = await HTTP.post('/auth/refresh-token', null);

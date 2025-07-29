@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FaUsers, FaBuilding, FaUserTie, FaChartBar, FaBriefcase } from 'react-icons/fa';
+import { FaUsers, FaBuilding, FaUserTie } from 'react-icons/fa';
 import { MdFeedback, MdHowToVote } from 'react-icons/md';
 import { getGlobalStatistics } from '../../../service/Dashboard';
 import { Bar } from "react-chartjs-2";
@@ -61,7 +61,6 @@ useEffect(() => {
 const fetchAuditLogs = async () => {
   try {
     const data = await getRecentAuditLogs(5);
-    console.log("Audit Logs Data:", data);
     setAuditLogs(data);
   } catch (error) {
     console.error("Failed to fetch recent audit logs", error);

@@ -6,24 +6,28 @@ import { Model, Types } from 'mongoose';
 import { Contact } from './entities/contact.entity';
 import { PaginiationQueryDto } from 'src/common/dto/paginationQuery.dto';
 import { AuditLogService } from 'src/AuditLogs/audit.service';
-import { EnterpriseModule } from 'src/enterprise/enterprise.module';
 import { Enterprise } from 'src/enterprise/entities/enterprise.entity';
+import { types } from 'util';
+import { UserRole } from 'src/user/dto/create-user.dto';
+
+
 
 @Injectable()
 export class ContactService {
   constructor(@InjectModel("Contact") private contactModel: Model<Contact>,
-  @InjectModel("Enterprise") private enterpriseModel: Model<EnterpriseModule>,
+  @InjectModel("Enterprise") private enterpriseModel: Model<Enterprise>,
                                       private auditLogService: AuditLogService,
 ){}
 
-  async create(createContactDto: CreateContactDto, addBy: string): Promise<Contact> {
+  async create(createContactDto: CreateContactDto, addBy: string, userRole: UserRole): Promise<Contact> {
     const enterpriseId = createContactDto.enterpriseId;
-    const enterprise = await this.enterpriseModel.findById(enterpriseId).select('addBy') as Enterprise ;
+
+    const enterprise = await this.enterpriseModel.findById(enterpriseId).select('addBy contacts') as Enterprise & Document;
+
     if (!enterprise) {
       throw new NotFoundException('Enterprise not found');
     }
-
-    const isAuthorized = enterprise.addBy.some(
+    const isAuthorized = userRole === UserRole.ADMIN || enterprise.addBy.some(
       (userId) => userId.toString() === addBy
     );
 
@@ -33,8 +37,20 @@ export class ContactService {
 
     const createdContact = new this.contactModel({
       ...createContactDto,
+      enterpriseId: new Types.ObjectId(enterpriseId),
       addBy: new Types.ObjectId(addBy),
     });
+
+    await createdContact.save();
+    if (!enterprise.contacts) {
+      enterprise.contacts = [];
+    }
+
+    enterprise.contacts.push(createdContact._id);
+    await this.enterpriseModel.updateOne(
+      { _id: enterpriseId },
+      { $push: { contacts: createdContact._id } }
+    );
 
     await this.auditLogService.createLog({
       userId: new Types.ObjectId(addBy),
@@ -42,10 +58,8 @@ export class ContactService {
       description: `Contact ${createdContact._id} created by user ${addBy}`,
     });
 
-    return createdContact.save();
+    return createdContact;
   }
-
-
   async findAll(): Promise<Contact[]>{
     const findAllContact = await this.contactModel.find();
     if(!findAllContact || findAllContact.length === 0){
@@ -62,8 +76,10 @@ export class ContactService {
     return findContactById
   }
 
-  async findEnterprise(enterpriseId: string): Promise<Contact>{
-    const findEnterpriseById = await this.contactModel.findById(enterpriseId).exec();
+  async findEnterprise(enterpriseId: string): Promise<Contact[]>{
+    const objectId = new Types.ObjectId(enterpriseId);
+
+    const findEnterpriseById = await this.contactModel.find({ enterpriseId: objectId }).populate('enterpriseId').populate('addBy', 'name email phone position preferedContactMethod').exec();
     if(!findEnterpriseById) throw new NotFoundException('enterprise not found')
   return findEnterpriseById;
     }
@@ -79,7 +95,7 @@ export class ContactService {
     return updatedContact;
   }
     
-    async removeContact(id: string, userId: string): Promise<Contact>{
+  async removeContact(id: string, userId: string): Promise<Contact>{
       const removeContact = await this.contactModel.findByIdAndDelete(id);
       if(!removeContact) throw new BadRequestException('contact not found');
       await this.auditLogService.createLog({
@@ -89,12 +105,12 @@ export class ContactService {
       })
       return removeContact;
         }
-    async getGlobalContact(): Promise<number>{
+  async getGlobalContact(): Promise<number>{
       const globalContact = await this.contactModel.countDocuments();
       return globalContact;
-    }
+  }
 
-    async findAllcontacts(query: PaginiationQueryDto){
+  async findAllcontacts(query: PaginiationQueryDto){
       const {page= '1', limit = '10', search,isActive} = query;
       const pageNum = parseInt(page);
       const limitNum = parseInt(limit);
@@ -122,5 +138,38 @@ export class ContactService {
         totalPages: Math.ceil(total / limitNum),
       };
     }
-    
+  async getContactsByUser(userId: string) {
+    return this.contactModel.find({ enterpriseId: userId }).exec();
+  }
+  async getContactById(contactId: string): Promise<Contact | null> {
+    return this.contactModel
+      .findById(contactId)
+      .populate('enterpriseId')
+      .populate('addBy', 'name email')
+      .exec();
+  }
+  async searchContacts(filters: {
+    name?: string;
+    email?: string;
+    position?: string;
+    preferedContactMethod?: string;
+  }): Promise<Contact[]> {
+    const query: any = {};
+
+    if (filters.name) {
+      query.name = { $regex: filters.name, $options: 'i' };
+    }
+    if (filters.email) {
+      query.email = { $regex: filters.email, $options: 'i' };
+    }
+    if (filters.position) {
+      query.position = { $regex: filters.position, $options: 'i' };
+    }
+    if (filters.preferedContactMethod) {
+      query.preferedContactMethod = filters.preferedContactMethod;
+    }
+    console.log('Search query:', query);
+
+    return this.contactModel.find(query).exec();
+  }
 }

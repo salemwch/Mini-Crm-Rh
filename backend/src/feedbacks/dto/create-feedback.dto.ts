@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsMongoId, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateFeedbackDto {
 
@@ -13,8 +13,7 @@ export class CreateFeedbackDto {
     tags? : string[]
     @IsBoolean()
     isActive: boolean;
+    @IsMongoId()
     @IsString()
     enterpriseId: string;
-    @IsString()
-    contactId: string;
 }

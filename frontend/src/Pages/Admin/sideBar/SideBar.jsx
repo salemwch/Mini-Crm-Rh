@@ -20,7 +20,7 @@ const { user, logout } = useContext(AuthContext);
     const submenuRef = useRef(null);
     const navigate = useNavigate();
     const [showNotifications, setShowNotifications] = useState(false);
-    const { notifications, setNotifications, hasNew, setHasNew } = useNotifications();
+    const { notifications, setNotifications, hasNew } = useNotifications();
 
   const getUserImageSrc = (image) => {
   if (!image || image === 'null' || image === 'undefined') {
@@ -28,13 +28,11 @@ const { user, logout } = useContext(AuthContext);
   }
   return `${IMAGE_BASE_URL}${image}`;
 };
-
-   useEffect(() => {
+  useEffect(() => {
   if (!open) {
     setActiveMenuKey(null);
   }
 }, [open]);
-
     const toggleSubMenu = (key) => {
       setActiveMenuKey((prevKey) => (prevKey === key ? null : key));
     };
@@ -44,14 +42,12 @@ const { user, logout } = useContext(AuthContext);
           setActiveMenuKey(null);
         }
       };
-    
       document.addEventListener("mousedown", handleClickOutside);
       return () => {
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }, []);
-
-     const handleLogout = async () => {
+    const handleLogout = async () => {
     await logout();
     navigate('/login');
   };
@@ -68,7 +64,6 @@ const { user, logout } = useContext(AuthContext);
   },
   [ setNotifications ]
 );
-
     const menus = [
       { title: "Dashboard",
         icon: <MdSpaceDashboard />,
@@ -89,37 +84,39 @@ const { user, logout } = useContext(AuthContext);
         subMenu: ["General", "Security", "Notifications"],
         key: "settings",
         gap: true,
-
       },
-      
       {
         title: "Contacts",
         icon: <BiChat />,
-        subMenu: ["All Contacts", "New Contact"],
+        subMenu: [{title: "Create Contacts", path:"/Contacts"},
+                  {title: "Get Contacts", path:"/All-Contacts"}
+        ],
         key: "contacts",
         gap: true,
-
       },
       {
         title: "HR Feedback",
         icon: <MdOutlineHeadsetMic />,
-        subMenu: ["Feedback History", "Add Feedback"],
+        subMenu: [{title: "Create Feedback", path:"/Create-feedback"},
+                  {title: "Get Feedbacks", path:"/All-Feedbacks"},
+        ],
         key: "feedback",
         gap: true,
-
       },
       {
         title: "Documents",
         icon: <HiDocumentText />,
-        subMenu: ["All Documents", "Upload PDF"],
+        subMenu: [{title: "Create Documents", path:"/create-documents"},
+                  {title: "See Documents", path:"/See-documents"},
+        ],
         key: "documents",
                 gap: true,
       },
       {
         title: "Partner Companies",
         icon: <BiBuilding />,
-        subMenu: [{ title: "Company List", path: ""},
-                  {title: "Add Company", path: "/admin-enterprises"}
+        subMenu: [{ title: "Company List", path: "/enterprises-documents"},
+                  {title: "Create Events", path: "/admin-events"}
         ],
         key: "enterprises",
         gap: true,
@@ -129,14 +126,10 @@ const { user, logout } = useContext(AuthContext);
         icon: <RiFileList2Line />,
         subMenu: ["Activity History"],
         key: "auditlog",
-                gap: true,
+        gap: true,
       },
       
     ];
-
-
-
-
     return (
   <div className="w-full min-h-screen flex">
     <div

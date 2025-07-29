@@ -16,7 +16,6 @@ export class AbsenceService {
                                         private notificationService: NotificationService,
                                         private notificationGetway: NotificationGateway,
 ) { }
-
     async create(dto: CreateAbsenceDto, userId: string): Promise<Absence> {
         const absence = await this.model.create({ ...dto, user: userId });
         console.log('Absence created:', absence);
@@ -59,19 +58,12 @@ export class AbsenceService {
 
         return absence;
     }
-
-
-
-
-
     async  findByUser(userId: string): Promise<Absence[]> {
         return this.model.find({ user: userId }).sort({ createdAt: -1 });
     }
-
     async  findAll(): Promise<Absence[]> {
         return this.model.find().populate('user').sort({ createdAt: -1 });
     }
-
     async updateStatus(id: string, dto: UpdateAbsenceStatusDto): Promise<Absence> {
         const updated = await this.model.findByIdAndUpdate(id, dto, { new: true });
         if (!updated) {
@@ -79,6 +71,5 @@ export class AbsenceService {
         }
         return updated;
     }
-
     
 }

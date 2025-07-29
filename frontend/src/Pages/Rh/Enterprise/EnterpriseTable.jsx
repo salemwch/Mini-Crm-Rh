@@ -2,14 +2,11 @@ import React, { useEffect, useState } from 'react';
 import {
   getMyEnterprises,
   getAverageEnterpriseRating,
-  deleteEnterpriseById,
-  updateEnterprise,
-  getEnterpriseById,
 } from '../../../service/interprise';
 import { FaSearch } from 'react-icons/fa';
 import TopBanner from '../../../components/TopBar';
 import EnterpriseInfo from './EnterpriseInfo';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function EnterprisesTable() {
   const [enterprises, setEnterprises] = useState([]);
@@ -17,6 +14,11 @@ export default function EnterprisesTable() {
   const [averageRating, setAverageRating] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+const handleUpdateClick = (enterpriseId) => {
+  navigate(`/enterprise/update/${enterpriseId}`);
+};
 
   const fetchEnterprises = async () => {
     setLoading(true);
@@ -39,22 +41,7 @@ export default function EnterprisesTable() {
         setError(err);
     }
   };
-  const handleDelete = async (id) => {
-    try {
-      await deleteEnterpriseById(id);
-      await fetchEnterprises();
-    } catch (err) {
-      console.error('Delete failed', err);
-    }
-  };
-  const handleUpdate = async (id, updatedData) => {
-    try {
-      await updateEnterprise(id, updatedData);
-      await fetchEnterprises();
-    } catch (err) {
-      console.error('Update failed', err);
-    }
-  };
+  
 
     const handleCloseInfo = () => setSelectedEnterprise(null);
 
@@ -109,17 +96,12 @@ export default function EnterprisesTable() {
 </button>
 
     <button
-      className="btn btn-sm btn-outline btn-warning hover:bg-warning hover:text-white"
-      onClick={() => handleUpdate(enterprise._id, {})}
-    >
-      Update
-    </button>
-    <button
-      className="btn btn-sm btn-outline btn-danger hover:bg-danger hover:text-white"
-      onClick={() => handleDelete(enterprise._id)}
-    >
-      Delete
-    </button>
+  className="btn btn-sm btn-outline btn-warning hover:bg-warning hover:text-white"
+  onClick={() => handleUpdateClick(enterprise._id)}
+>
+  Update
+</button>
+    
   </div>
 
   {loading && <div>Loading enterprise info...</div>}

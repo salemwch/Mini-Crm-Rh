@@ -345,4 +345,18 @@ export class UserController {
     return this.userService.getRecenUsers(limit);
   }
 
+  @Get('role/:role')
+  async getUsersByRole(@Param('role') role: UserRole) {
+    if (!Object.values(UserRole).includes(role as UserRole)) {
+      throw new Error(`Invalid role: ${role}`);
+    }
+
+    return this.userService.findUsersByRole(role as UserRole);
+  }
+  @Get('user/:userId/enterprise')
+  @UseGuards(AccessTokenGuards)
+  @Roles(UserRole.ADMIN)
+  async getEnterpriseByUser(@Param('userId') userId: string) {
+    return this.userService.getUserEnterprise(userId);
+  }
 }

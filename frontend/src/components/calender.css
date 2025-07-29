@@ -1,0 +1,19 @@
+.react-calendar {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  font-size: 1.25rem;
+  border: none;
+}
+
+.react-calendar__month-view__days {
+  height: 100%;
+}
+
+.react-calendar__tile {
+  padding: 1rem 0.5rem;
+}
+
+.react-calendar__navigation {
+  margin-bottom: 1rem;
+}

@@ -124,3 +124,13 @@ export const getJobOffersByEnterprise = async (enterpriseId) => {
     throw error.response?.data || error;
   }
 };
+export const getLastFiveJobOffers = async () => {
+  try {
+    const response = await HTTP.get('/job-offer/last-five', {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};

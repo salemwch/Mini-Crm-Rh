@@ -7,11 +7,15 @@ import { UserModule } from 'src/user/user.module';
 import { AuditLogModule } from 'src/AuditLogs/audit.module';
 import { User, UserSchema } from 'src/user/entities/user.schema';
 import { JobOfferModule } from 'src/joboffer/joboffer.module';
+import { DocumentModule } from 'src/document/document.module';
+import { FeedbacksModule } from 'src/feedbacks/feedbacks.module';
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Enterprise', schema: EnterpriseSchema }, { name: User.name, schema: UserSchema },
 ]), AuditLogModule, forwardRef(() => UserModule ),
   forwardRef(() => JobOfferModule),
   forwardRef(() => EnterpriseModule),
+  forwardRef(() => DocumentModule),
+  forwardRef(() =>  FeedbacksModule),
 ],
   controllers: [EnterpriseController],
   providers: [EnterpriseService],

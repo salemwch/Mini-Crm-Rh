@@ -7,13 +7,11 @@ import loadingAnimation from "../assets/animation/loading.json";
 const PrivateRoute = ({ children, roles = [] }) => {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
-  console.log('[PrivateRoute] user:', user);
-console.log('[PrivateRoute] loading:', loading);
+  
 
   try {
     if (loading) {
-      console.log('[PrivateRoute] user:', user);
-console.log('[PrivateRoute] loading:', loading);
+      
 
       return (
         <div style={{ width: 200, margin: "auto" }}>
@@ -22,6 +20,7 @@ console.log('[PrivateRoute] loading:', loading);
       );
       
     }
+    
 
     if (!user && location.pathname !== '/') {
       console.warn(`[PrivateRoute] Unauthorized access attempt to ${location.pathname} - redirecting to /`);

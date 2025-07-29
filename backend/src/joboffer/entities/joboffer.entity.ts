@@ -12,8 +12,8 @@ export class JobOffer {
   @Prop({ required: true })
   description: string;
 
-  @Prop({ required: true })
-  requirements: string[];
+  @Prop([String])
+  requirements: string[]
 
   @Prop()
   location?: string;

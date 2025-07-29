@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Calendar, DateRange } from 'react-date-range';
+import { DateRange } from 'react-date-range';
 import { addDays } from 'date-fns';
 import { createAbsence } from '../service/absence';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import RhSidebar from './RhSidebar';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-export default function AddAbsenceModal({ closeModal , isOpen, setOpen}) {
+export default function AddAbsenceModal({ closeModal, isOpen, setOpen, defaultStartDate = new Date() }) {
   const [selectionRange, setSelectionRange] = useState([
     {
       startDate: new Date(),
@@ -32,21 +32,30 @@ const handleNextMonth = () => {
   };
 
   const handleSubmit = async () => {
-    const startDate = selectionRange[0].startDate.toISOString();
-    const endDate = selectionRange[0].endDate.toISOString();
+  const startDate = selectionRange[0].startDate.toISOString();
+  const endDate = selectionRange[0].endDate.toISOString();
 
-    try {
-      await createAbsence({ startDate, endDate, reason });
-      alert('Absence request sent!');
-      closeModal();
-    } catch (error) {
-      alert('Error: ' + (error.message || 'Unknown error'));
-    }
-  };
+  if (!reason.trim()) {
+    alert('Please provide a reason for your absence.');
+    return;
+  }
+
+  try {
+    await createAbsence({ startDate, endDate, reason });
+    alert('Absence request sent!');
+    closeModal();
+  } catch (error) {
+    console.error('Submit error:', error);
+    alert(
+      'Request failed: ' +
+        (error?.response?.data?.message || error.message || 'Unknown error')
+    );
+  }
+};
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-        <RhSidebar isOpen={isOpen} setOpen={setOpen} />
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Request Absence</h2>
         

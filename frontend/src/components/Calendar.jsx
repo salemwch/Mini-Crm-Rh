@@ -1,56 +1,69 @@
-import React, { useState } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import Calendar from 'react-calendar';
+import { FaPlus } from 'react-icons/fa';
 import AddAbsenceModal from './AddAbsence';
-import SideBar from '../Pages/Admin/sideBar/SideBar';
-import RhSidebar from './RhSidebar';
-
-export default function AbsenceCalendar({ isOpen, setOpen }) {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+import { getAllAbsences } from '../service/absence';
+import '../components/calender.css';
+export default function AbsenceCalendar() {
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
+  const [absences, setAbsences] = useState([]);
 
-  const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)));
+useEffect(() => {
+  const fetchAbsences = async () => {
+    try {
+      const res = await getAllAbsences();
+      setAbsences(res);
+    } catch (err) { 
+      console.error(err);
+    }
   };
 
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() + 1)));
+  fetchAbsences();
+}, []);
+  const handleDayClick = (value) => {
+    setSelectedDate(value);
+    setShowModal(true);
   };
 
   return (
-    <div className="flex min-h-screen">
-             <RhSidebar  isOpen={isOpen} setOpen={setOpen} />
-
-      <div className="w-64 bg-gray-100">
-
+    <div className="min-h-screen p-6 bg-gray-50">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Absence Calendar</h2>
+        <button
+          className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+          onClick={() => setShowModal(true)}
+        >
+          <FaPlus /> Add Absence
+        </button>
       </div>
-      <div className="flex-1 p-6">
-        {/* Top Controls */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-2">
-            <button onClick={handlePrevMonth}><FaChevronLeft /></button>
-            <span className="font-bold text-lg">
-              {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
-            </span>
-            <button onClick={handleNextMonth}><FaChevronRight /></button>
-          </div>
 
-          <button
-            className="bg-indigo-600 text-white px-4 py-2 rounded-md"
-            onClick={() => setShowModal(true)}
-          >
-            Add Absence
-          </button>
-        </div>
-        <div className="grid grid-cols-7 gap-2">
-          {[...Array(30)].map((_, i) => (
-            <div key={i} className="border p-2 rounded text-center">
-              {i + 1}
-            </div>
-          ))}
-        </div>
+      <div className="flex justify-center items-center h-[75vh] w-full">
+  <div className="w-full max-w-6xl">
+    <Calendar
+      onClickDay={handleDayClick}
+      value={selectedDate}
+      tileClassName={({ date, view }) => {
+        const absences = ['2025-07-25', '2025-07-29'];
+        if (absences.includes(date.toISOString().slice(0, 10))) {
+          return 'bg-red-200 text-red-700 rounded-full';
+        }
+      }}
+      className="w-full text-lg p-4 rounded-lg shadow-md"
+    />
+  </div>
+</div>
 
-        {showModal && <AddAbsenceModal closeModal={() => setShowModal(false)} />}
-      </div>
+
+      {showModal && (
+  <AddAbsenceModal
+    selectedDate={selectedDate}
+    setOpen={setShowModal}
+    isOpen={showModal}
+    closeModal={() => setShowModal(false)}
+  />
+)}
+
     </div>
   );
 }

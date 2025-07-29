@@ -42,16 +42,21 @@ export class EnterpriseService {
       addBy: new Types.ObjectId(userId),
       isApproved: false,
     });
+    const savedEnterprise = await enterprise.save();
+    await this.userModel.findByIdAndUpdate(userId, { enterprise: savedEnterprise._id });
+
     const user = await this.userModel.findById(userId).select('name role')
     await this.auditLogService.createLog({
       userId: new Types.ObjectId(userId),
       action: 'Enterprise_Created',
       description: `enterprise ${enterprise.name} created by ${user?.role} ${user?.name || userId}`
     })
-    return enterprise.save();
+    return savedEnterprise;
   }
   async findAll(): Promise<Enterprise[]>{
-    const findAllEnterprise = await this.enterpriseModel.find();
+    const findAllEnterprise = await this.enterpriseModel.find()
+    .populate('documents')
+    .select('name website phone secteur address rating notes addBy isActive industryCode contacts documents isApproved createdAt updatedAt');
     if(!findAllEnterprise || findAllEnterprise.length === 0){
       throw new NotFoundException('no enterprise founded');
     }
@@ -115,8 +120,6 @@ export class EnterpriseService {
     };
   }
 
-
-
   async getEnterpriseCountBySector() {
     return this.enterpriseModel.aggregate([
       {$group: {_id: "$secteur", count: {$sum: 1}}},
@@ -124,12 +127,15 @@ export class EnterpriseService {
     ])
   }
   async getRecentEnterprises(limit = 5) {
-    return this.enterpriseModel.find().sort({ createdAt: -1 }).limit(limit);
+    return this.enterpriseModel.find().sort({ createdAt: -1 }).limit(limit).populate({
+      path: 'addBy',
+      model: 'User',
+      select: 'name',
+    }).lean().exec();
   }
   async countInactiveEnterprises() {
     return this.enterpriseModel.countDocuments({ isActive: false });
   }
-
   async getAverageEnterpriseRating(){
     const result = await this.enterpriseModel.aggregate([
       {$match: {rating: {$exists: true}}},
@@ -154,5 +160,102 @@ export class EnterpriseService {
     const userObjectId = new Types.ObjectId(userId);
     return this.enterpriseModel.find({ addBy: userObjectId }).exec();
   }
+  async getEnterprisesWithContacts() {
+    return await this.enterpriseModel.aggregate([
+      {
+        $lookup: {
+          from: 'contacts',
+          localField: '_id',
+          foreignField: 'enterpriseId',
+          as: 'contacts',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          contacts: {
+            _id: 1,
+            name: 1,
+            email: 1,
+            phone: 1,
+            position: 1,
+            preferedContactMethod: 1,
+            createdAt: 1,
+            },
+        },
+      },
+    ]);
+  }
+  async getEnterprisesWithFeedbacks() {
+    return this.enterpriseModel.aggregate([
+      {
+        $lookup: {
+          from: 'feedbacks',
+          localField: '_id',
+          foreignField: 'enterpriseId',
+          as: 'feedbacks',
+        },
+      },
+      { $unwind: { path: '$feedbacks', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'feedbacks.user',
+          foreignField: '_id',
+          as: 'feedbackUser',
+        },
+      },
+      { $unwind: { path: '$feedbackUser', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'addBy',
+          foreignField: '_id',
+          as: 'addBy',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          email: 1,
+          phone: 1,
+          address: 1,
+          addBy: {
+            _id: 1,
+            name: 1,
+            email: 1,
+          },
+          feedbacks: {
+            content: '$feedbacks.content',
+            rating: '$feedbacks.rating',
+            createdAt: '$feedbacks.createdAt',
+            image: '$feedbacks.image',
+            user: {
+              _id: '$feedbackUser._id',
+              name: '$feedbackUser.name',
+              email: '$feedbackUser.email',
+              role: '$feedbackUser.role',
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          name: { $first: '$name' },
+          email: { $first: '$email' },
+          phone: { $first: '$phone' },
+          address: { $first: '$address' },
+          addBy: { $first: '$addBy' },
+          feedbacks: { $push: '$feedbacks' },
+        },
+      },
+    ]);
+  }
+
+
+
 
 }

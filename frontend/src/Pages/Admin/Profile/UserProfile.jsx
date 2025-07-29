@@ -77,8 +77,6 @@ const UserProfile = ({ changePassword }) => {
         id: updatedUserObject._id,
       });
 
-      console.log('API Response:', response);
-      console.log('New user state:', { ...updatedUserObject, id: updatedUserObject._id });
       setPreviewImage(
         updatedUserObject.image
           ? `${IMAGE_BASE_URL}${updatedUserObject.image}?v=${Date.now()}` 

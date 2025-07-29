@@ -5,7 +5,6 @@ import { AuthContext } from '../components/AuthProvider';
 const useNotificationSocket = () => {
   const { user } = useContext(AuthContext);
   const socketRef = useRef(null);
-
   useEffect(() => {
     if (!user) {
       if (socketRef.current) {
@@ -14,19 +13,22 @@ const useNotificationSocket = () => {
       }
       return;
     }
-
     if (!socketRef.current) {
-      const socket = io('http://localhost:3000', {
-        withCredentials: true,
-        auth: {
-          userId: user.id,
-          role: user.role,
-        },
-      });
+  const socket = io('http://localhost:3000', {
+    withCredentials: true,
+    auth: {
+      userId: user.id,
+      role: user.role,
+    },
+  });
+  socket.on('connect', () => {
+    console.log('🔌 Connected to socket server:', socket.id);
+    socket.emit('user-connected', user.id);
+  });
 
-      console.log('🔗 Connecting socket for user:', user.id);
-      socketRef.current = socket;
-    }
+  socketRef.current = socket;
+}
+
 
     return () => {
       if (socketRef.current) {

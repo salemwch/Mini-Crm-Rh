@@ -169,5 +169,8 @@ async create(
   async getByEnterprise(@Param('id') id: string) {
     return this.jobOfferService.getJobOffersByEnterprise(id);
   }
-
+  @Get('last-five')
+  async getLastFiveJobOffers() {
+    return this.jobOfferService.getLastFiveJobOffers();
+  }
 }

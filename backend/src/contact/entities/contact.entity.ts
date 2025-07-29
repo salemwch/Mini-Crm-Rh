@@ -17,10 +17,9 @@ export class Contact {
     preferedContactMethod: PreferredContactMethod;
     @Prop({default: true})
     isActive: boolean;
-    @Prop({type: Types.ObjectId, ref: 'EnterPrise', required:true})
+    @Prop({ type: Types.ObjectId, ref: 'Enterprise', required:true})
     enterpriseId: Types.ObjectId;
     @Prop({type: Types.ObjectId, ref: User.name, required: true})
-    addBy?: Types.ObjectId;
+    addBy: Types.ObjectId;
 }
-
 export const ContactSchema = SchemaFactory.createForClass(Contact);

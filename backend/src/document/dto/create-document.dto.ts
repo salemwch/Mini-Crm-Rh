@@ -6,5 +6,5 @@ export class CreateDocumentDto {
     name: string;
     @IsNotEmpty()
     @IsString()
-    enterPriseId: string;
+    enterpriseId: string;
 }

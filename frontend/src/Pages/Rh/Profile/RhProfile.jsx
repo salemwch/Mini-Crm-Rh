@@ -79,8 +79,6 @@ const RhProffile = (changePassword) => {
                 ...updatedUserObject,
                 id: updatedUserObject._id,
             });
-    console.log('API Response:', response);
-    console.log('New user state:', { ...updatedUserObject, id: updatedUserObject._id });
             setPreviewImage(
                 updatedUserObject.image
                 ? `${IMAGE_BASE_URL}/${updatedUserObject.image}?v=${Date.now()}`
@@ -236,7 +234,22 @@ const RhProffile = (changePassword) => {
               >
                 {loadingPassword ? 'Changing...' : 'Change Password'}
               </button>
-              {errorPassword && <p className="text-danger mt-2">{errorPassword}</p>}
+{Array.isArray(errorPassword)
+  ? errorPassword.map((err, idx) => (
+      <div key={idx} className="text-danger mt-2">
+        {Object.values(err.constraints).map((msg, i) => (
+          <p key={i}>{msg}</p>
+        ))}
+      </div>
+    ))
+  : errorPassword?.constraints && (
+      <div className="text-danger mt-2">
+        {Object.values(errorPassword.constraints).map((msg, i) => (
+          <p key={i}>{msg}</p>
+        ))}
+      </div>
+    )}
+
               {successPassword && <p className="text-success mt-2">{successPassword}</p>}
             </form>
           </div>
@@ -271,45 +284,6 @@ const RhProffile = (changePassword) => {
                   value={formData.email || ''}
                   onChange={handlechange}
                 />
-              </div>
-              <div className="form-check mb-3">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="isActive"
-                  id="isActive"
-                  checked={user?.isActive}
-                  disabled
-                />
-                <label className="form-check-label" htmlFor="isActive">
-                  Is Active
-                </label>
-              </div>
-              <div className="form-check mb-3">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="isEmailVerified"
-                  id="isEmailVerified"
-                  checked={user?.isEmailVerified}
-                  disabled
-                />
-                <label className="form-check-label" htmlFor="isEmailVerified">
-                  Email Verified
-                </label>
-              </div>
-              <div className="form-check mb-3">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  name="isApproved"
-                  id="isApproved"
-                  checked={user?.isApproved}
-                  disabled
-                />
-                <label className="form-check-label" htmlFor="isApproved">
-                  Approved
-                </label>
               </div>
               <div className="mb-3">
                 <label className="small mb-1" htmlFor="createdAt">Account Created</label>
@@ -347,7 +321,14 @@ const RhProffile = (changePassword) => {
               <button className="btn btn-primary" type="submit" disabled={loading}>
                 {loading ? 'Saving...' : 'Save Changes'}
               </button>
-              {errorProfile && <p className="text-danger mt-2">{errorProfile}</p>}
+              {Array.isArray(errorProfile)
+  ? errorProfile.map((err, index) =>
+      Object.values(err.constraints).map((msg, idx) => (
+        <p key={`${index}-${idx}`} className="text-danger mt-2">{msg}</p>
+      ))
+    )
+  : errorProfile && <p className="text-danger mt-2">{errorProfile}</p>}
+
               {successProfile && <p className="text-success mt-2">{successProfile}</p>}
             </form>
           </div>

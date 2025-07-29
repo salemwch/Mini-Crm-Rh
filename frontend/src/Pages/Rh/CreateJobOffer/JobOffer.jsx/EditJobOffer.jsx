@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getJobOfferById, getJobOffersByEnterprise, updateJobOffer } from "../../../../service/jobOffer";
+import { getJobOfferById, updateJobOffer } from "../../../../service/jobOffer";
 import { useParams } from "react-router-dom";
 import TopBanner from "../../../../components/TopBar";
 
@@ -25,7 +25,6 @@ const UpdateJobOffer = () => {
     try {
         const response = await getJobOfferById(id);
         const jobOffer = response;
-        console.log(response);
         setJobOfferData(jobOffer);
         setFormData({
         title: jobOffer.title || "",
@@ -38,7 +37,6 @@ const UpdateJobOffer = () => {
 
         });
     } catch (err) {
-        console.log(err);
         setError("Failed to load job offer.");
     } finally {
         setLoading(false);
@@ -58,10 +56,8 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     try {
     await updateJobOffer(id, formData);
-    console.log(id, formData);
     setSuccess(true);
     } catch (err) {
-        console.log(err)
     setError("Update failed.");
     }
   };

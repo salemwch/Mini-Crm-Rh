@@ -29,8 +29,8 @@ export class Enterprise {
     addBy: Types.ObjectId[];
     @Prop({type: Types.ObjectId, ref: 'Feedback'})
     feedbacks: Types.ObjectId[];   
-    @Prop([String])
-    documents: string[];
+    @Prop([{  type: Types.ObjectId , ref: 'Document' , default: [] }])
+    documents: Types.ObjectId[];
     @Prop({ default: false })
     isApproved: boolean;
 

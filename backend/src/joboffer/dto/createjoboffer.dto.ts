@@ -18,9 +18,10 @@ export class CreateJobOfferDto {
   @IsNotEmpty()
   description: string;
 
-  @IsArray({ each: true })
-  @IsNotEmpty()
-  requirements: string[];
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  requirements?: string[]
 
   @IsMongoId()
   @IsNotEmpty()

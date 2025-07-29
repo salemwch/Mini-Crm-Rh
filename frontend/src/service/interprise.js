@@ -20,12 +20,12 @@ export const createEnterprise = async (enterpriseData) => {
 export const getAllEnterprises = async () => {
   try {
     const response = await HTTP.get("/enterprise");
-    return response.data;
+    return response.data.findAllEnterprise;
   } catch (error) {
     throw error.response?.data || error;
   }
 };
-export const getEnterpriseById = async (id) => {
+export const getEnterprisesById = async (id) => {
   try {
     const response = await HTTP.get(`/enterprise/enterprise/${id}`);
     return response.data;
@@ -51,7 +51,7 @@ export const deleteEnterpriseById = async (id) => {
   }
 };
 
- export const fetchEnterprises = async (queryParams = {}) => {
+ export const getEnterprises = async (queryParams = {}) => {
   try {
     const queryString = new URLSearchParams(queryParams).toString();
     const response = await HTTP.get(`/enterprise?${queryString}`);
@@ -87,6 +87,16 @@ export const getAverageEnterpriseRating = async () => {
 export const getMyEnterprises = async () => {
   try {
     const response = await HTTP.get('/enterprise/my-enterprises', {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+export const getEnterprisesWithFeedbacks = async () => {
+  try {
+    const response = await HTTP.get('/enterprise/with-feedbacks', {
       withCredentials: true,
     });
     return response.data;
