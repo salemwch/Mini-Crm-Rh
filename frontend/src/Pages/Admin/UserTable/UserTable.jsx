@@ -4,6 +4,7 @@ import { toast} from "react-toastify";
 import { FaSearch } from "react-icons/fa";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function UsersTable() {
 
@@ -16,6 +17,7 @@ export default function UsersTable() {
     const [page, setPage] = useState(1);
     const limit = 10;
     const debouncedSearch = useDebouncedValue(search, 300);
+    const navigate = useNavigate();
 
    const fetchUsers = async () => {
     try {
@@ -78,7 +80,9 @@ export default function UsersTable() {
       toast.error("Failed to delete user");
     }
   };
-
+const handleViewDetails = (userId) => {
+  navigate(`/profile/${userId}`);
+};
     return (
         <div className="bg-white w-full min-h-screen px-12 py-12  rounded-lg shadow-md space-y-6 ">
           <div className="flex justify-between items-center mb-4">
@@ -216,9 +220,12 @@ export default function UsersTable() {
           </td>
           <td className="px-2 py-3">
             <div className="flex flex-wrap gap-2 ">
-              <button className="btn btn-sm btn-outline btn-info hover:bg-info  hover:text-white transition-all duration-200">
-                Details
-              </button>
+              <button
+  className="btn btn-sm btn-outline btn-info hover:bg-info hover:text-white transition-all duration-200"
+  onClick={() => handleViewDetails(user._id)}
+>
+  Details
+</button>
               <button
                 className={`btn btn-sm btn-outline  ${
                   user.isActive

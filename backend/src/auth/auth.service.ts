@@ -42,8 +42,6 @@ export class AuthService {
     private readonly auditLogService: AuditLogService,
     private readonly mailService2: MailService
   ) {}
-
-
   async login(dto: LoginDto, req: Request) {
     const user = await this.userService.findByEmail(dto.email);
     if (!user.isEmailVerified) {
@@ -84,7 +82,6 @@ export class AuthService {
       user: userWithTokens,
     };
   }
-  
   hashData(data: string): Promise<string> {
     return argon2.hash(data);
   }

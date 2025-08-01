@@ -100,7 +100,15 @@ export const getMe = async () => {
       throw error.response?.data || error;
     }
   };
-  
+  export const getAuthServiceHealth = async () =>{
+    
+    try{
+        const res = await HTTP.get('/auth/health');
+        return res.data;
+        }catch(error){
+            throw {status: 'error', message: 'Auth Service unreachable'};
+        }
+  };
   
 
 

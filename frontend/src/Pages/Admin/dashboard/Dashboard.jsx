@@ -5,8 +5,10 @@ import { getGlobalStatistics } from '../../../service/Dashboard';
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { getRecentUsers } from '../../../service/user';
-import { getRecentEnterprises } from '../../../service/interprise';
+import { getAverageEnterpriseRating, getRecentEnterprises } from '../../../service/interprise';
 import { getRecentAuditLogs } from '../../../service/auditLog';
+import { getLastFiveJobOffers } from '../../../service/jobOffer';
+import AuthHealthStatus from '../Health/AuthHealthStatus';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -15,8 +17,10 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [recentUsers, setRecentUsers] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
-
-
+  const [jobOffers, setJobOffers] = useState([]);
+  const [error, setError] = useState(null);
+  const [errorRating, setErrorRating] = useState(null);
+const [average, setAverage] = useState(null);
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -66,12 +70,9 @@ const fetchAuditLogs = async () => {
     console.error("Failed to fetch recent audit logs", error);
   }
 };
-
 useEffect(() => {
   fetchAuditLogs();
 }, []);
-
-
   const statCards = [
     { key: "totalUsers", title: "Total Users", icon: <FaUsers />, bg: "bg-blue-500" },
     { key: "activeUsers", title: "Active Users", icon: <FaUserTie />, bg: "bg-green-500" },
@@ -159,7 +160,36 @@ const barOptions = {
     }
   }
 };
+  useEffect(() => {
+    const fetchJobOffers = async () => {
+      try{
+        const data = await getLastFiveJobOffers();
+        setJobOffers(data);
+      }catch(error){
+        setError('failed  to load job Offers');
+        console.error(error);
+      }finally{
+        setLoading(false);
+      }
+    }
+    fetchJobOffers();
+  }, []);
 
+  useEffect(() => {
+    const fetchAverage = async () => {
+      try{
+        const data = await getAverageEnterpriseRating();
+        console.log(data);
+        setAverage(data?.average || 0);
+      }catch(error){
+        console.log("error:", error )
+        setErrorRating("failed to fetch average rating");
+      }finally{
+        setLoading(false);
+      }
+    }
+    fetchAverage();
+  }, [])
 
   return (
     <div className="p-6 space-y-8 min-h-screen bg-zinc-100">
@@ -200,7 +230,6 @@ const barOptions = {
 
 
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Users */}
         <div className="bg-white p-6 rounded-xl shadow">
           <h2 className="text-lg font-semibold mb-4">Last 5 Created Users</h2>
           <ul className="space-y-3">
@@ -244,24 +273,36 @@ const barOptions = {
 </div>
 
 
-        <div className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-lg font-semibold mb-4">Average Enterprise Rating</h2>
-          <div className="flex justify-center items-center h-28 text-4xl text-yellow-500 font-bold">
-            ★ 0.0
-          </div>
-        </div>
+         <div className="bg-white p-6 rounded-xl shadow text-center">
+      <h2 className="text-lg font-semibold mb-2">Health Status</h2>
+      <AuthHealthStatus/> 
+    </div>
 
-        <div className="bg-white p-6 rounded-xl shadow">
-          <h2 className="text-lg font-semibold mb-4">Recent Job Offers</h2>
-          <ul className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <li key={i} className="flex justify-between text-sm text-zinc-700">
-                <span>Job #{i + 1}</span>
-                <span className="text-zinc-400">-- status --</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+         <div className="bg-white p-6 rounded-xl shadow">
+      <h2 className="text-lg font-semibold mb-4">Recent Job Offers</h2>
+
+      {loading ? (
+        <p className="text-sm text-zinc-500">Loading...</p>
+      ) : error ? (
+        <p className="text-sm text-red-500">{error}</p>
+      ) : jobOffers.length === 0 ? (
+        <p className="text-sm text-zinc-400">No job offers available.</p>
+      ) : (
+        <ul className="space-y-3">
+          {jobOffers.map((job, i) => (
+            <li
+              key={job._id || i}
+              className="flex justify-between text-sm text-zinc-700"
+            >
+              <span>{job.title || `Job #${i + 1}`}</span>
+              <span className="text-zinc-400">
+                {job.status || "Pending"}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
 
         <div className="bg-white p-6 rounded-xl shadow">
   <h2 className="text-lg font-semibold mb-4">Recent Audit Logs</h2>

@@ -4,11 +4,11 @@ import { FaPlus } from 'react-icons/fa';
 import AddAbsenceModal from './AddAbsence';
 import { getAllAbsences } from '../service/absence';
 import '../components/calender.css';
+import TopBanner from './TopBar';
 export default function AbsenceCalendar() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
   const [absences, setAbsences] = useState([]);
-
 useEffect(() => {
   const fetchAbsences = async () => {
     try {
@@ -27,11 +27,13 @@ useEffect(() => {
   };
 
   return (
+    <>
+    <TopBanner/>
     <div className="min-h-screen p-6 bg-gray-50">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Absence Calendar</h2>
+        <h2 className="text-2xl mt-5 font-bold text-gray-800">Absence Calendar</h2>
         <button
-          className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+          className="flex items-center gap-2 bg-indigo-600 text-white mt-5 px-4 py-2 rounded-md hover:bg-indigo-700"
           onClick={() => setShowModal(true)}
         >
           <FaPlus /> Add Absence
@@ -65,5 +67,6 @@ useEffect(() => {
 )}
 
     </div>
+    </>
   );
 }

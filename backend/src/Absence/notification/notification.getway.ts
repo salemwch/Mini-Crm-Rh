@@ -3,8 +3,12 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
+  ConnectedSocket,
+  MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ConversationService } from 'src/Conversation/conversation.service';
 import { UserRole } from 'src/user/dto/create-user.dto';
 
 @WebSocketGateway({
@@ -17,7 +21,19 @@ import { UserRole } from 'src/user/dto/create-user.dto';
 export class NotificationGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
+  constructor(private readonly conversationService: ConversationService) {}
+  @SubscribeMessage('sendMessage')
+  async handleSendMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { groupId: string; content: string; senderId: string },
+  ) {
+    const message = await this.conversationService.sendMessage(payload.senderId, {
+      groupId: payload.groupId,
+      content: payload.content,
+    });
 
+    this.server.to(payload.groupId).emit('newMessage', message);
+  }
   private connectedUsers: Set<string> = new Set();
 
   handleConnection(client: Socket) {
@@ -50,6 +66,17 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
       this.server.emit('onlineUsers', Array.from(this.connectedUsers));
     }
   }
+  @SubscribeMessage('joinGroup')
+  handleJoinGroup(client: Socket, groupId: string) {
+    client.join(groupId);
+    console.log(`User ${client.id} joined group room ${groupId}`);
+  }
+
+  @SubscribeMessage('leaveGroup')
+  handleLeaveGroup(client: Socket, groupId: string) {
+    client.leave(groupId);
+    console.log(`User ${client.id} left group room ${groupId}`);
+  }
 
   notifyUser(userId: string, payload: any) {
     this.server.to(userId).emit('newNotification', payload);
@@ -58,4 +85,14 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
     this.server.to('rh').emit('newEventCreated', eventData);
     this.server.to('admins').emit('newEventCreated', eventData);
   }
+  sendMessageToGroup(groupId: string, message: any) {
+    this.server.to(groupId).emit('newMessage', message);
+  }
+  @SubscribeMessage('typing')
+  handleTyping(
+    @MessageBody() data: { groupId: string; userId: string }
+  ) {
+    this.server.to(data.groupId).emit('userTyping', data);
+  }
+
 }

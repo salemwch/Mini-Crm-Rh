@@ -1,6 +1,7 @@
 import {  useEffect, useState } from "react";
 import { getMyEnterprises } from "../../../service/interprise";
 import { createContact } from "../../../service/Contact";
+import TopBanner from "../../../components/TopBar";
 
 
 const CreateContacts = () => {
@@ -66,6 +67,8 @@ const CreateContacts = () => {
   if (error) return <p className="text-danger">{error}</p>;
 
   return (
+    <>
+    <TopBanner/>
     <div className="container-xl px-4 mt-4">
       <hr className="mt-0 mb-4" />
       <div className="row">
@@ -210,6 +213,7 @@ const CreateContacts = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

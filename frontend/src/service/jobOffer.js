@@ -134,3 +134,5 @@ export const getLastFiveJobOffers = async () => {
     throw error.response?.data || error;
   }
 };
+
+

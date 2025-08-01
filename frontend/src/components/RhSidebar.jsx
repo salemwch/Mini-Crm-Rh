@@ -10,7 +10,7 @@ export default function RhSidebar({ isOpen, setOpen }) {
   const navigate = useNavigate();
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate('/');
   };
   return (
     <div className="flex w-full bg-gray-50">
@@ -52,7 +52,7 @@ export default function RhSidebar({ isOpen, setOpen }) {
 />
           </ul>
           <ul className="flex flex-col space-y-1 w-full">
-            <MenuItem icon={<FaBriefcase />} label="JobOffer" to="/CreateJobOffer" isOpen={isOpen} />
+            <MenuItem icon={<FaBriefcase />} label="Events" to="/create-events" isOpen={isOpen} />
             <MenuItem icon={<FaRegListAlt />} label="List Of Enterprises" to={"/List-enterprises"} isOpen={isOpen} />
             <MenuItem icon={<FaSignOutAlt />} label="Logout" isOpen={isOpen} onClick={handleLogout}
  />

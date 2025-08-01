@@ -20,19 +20,14 @@ export class JobOffer {
 
   @Prop({ required: true })
   salary: number;
-
   @Prop({ type: Types.ObjectId, ref: 'Enterprise', required: true })
   enterpriseId: Types.ObjectId;
-
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   addBy: Types.ObjectId;
-
   @Prop({ default: 'open' })
   status: 'open' | 'closed' | 'paused' | 'expired';
-
   @Prop({ default: 0 })
   viewCount: number;
-
   @Prop()
   expiryDate?: Date;
 }

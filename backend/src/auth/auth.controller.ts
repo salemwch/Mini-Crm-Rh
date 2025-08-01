@@ -5,9 +5,9 @@ import { Request } from 'express';
 import { Request as ExpressRequest } from 'express';
 import { ApiOperation } from '@nestjs/swagger';
 import { resetdto } from './dto/reset.dto';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from 'src/user/entities/user.schema';
-import { Model } from 'mongoose';
+import { Connection, Model } from 'mongoose';
 import { UserRole } from 'src/user/dto/create-user.dto';
 import { Response} from 'express';
 import { Roles } from 'src/guards/role.decorator';
@@ -33,6 +33,7 @@ export class AuthController {
     @InjectModel(User.name) private userModle: Model<UserDocument>,
                             private configService: ConfigService,
                             private userService: UserService,
+    @InjectConnection() private readonly connection: Connection,
   ) {}
 
   @Post('login')
@@ -337,6 +338,20 @@ async deleteAcount(@Res() response: Response, @Param('id') id:string): Promise<R
       }
 
       throw new InternalServerErrorException('An unexpected error occurred while fetching user data');
+    }
+
+  }
+
+  @UseGuards(AccessTokenGuards)
+  @Roles(UserRole.ADMIN)
+  @Get('health')
+  async checkHealth(){
+    const isDbConnected = this.connection.readyState === 1;
+    return{
+      service: 'AuthService',
+      status: 'ok',
+      database: isDbConnected ? 'Connected' : 'Disconnected',
+      timestamp: new Date().toString(),
     }
   }
 

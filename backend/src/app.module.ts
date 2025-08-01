@@ -14,6 +14,7 @@ import { DahboardModule } from './dahboard/dahboard.module';
 import { AbsenceModule } from './Absence/absence.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EventModule } from './Events/event.Module';
+import { ConversationModule } from './Conversation/conversation.module';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { EventModule } from './Events/event.Module';
         autoIndex: process.env.NODE_ENV === 'development',
       }
     ),
-    MailModule, AuthModule, UserModule, EnterpriseModule, ContactModule, FeedbacksModule, DocumentModule, DahboardModule,AbsenceModule,EventModule],
+    MailModule, AuthModule, UserModule, EnterpriseModule, ContactModule, FeedbacksModule, DocumentModule, DahboardModule,AbsenceModule,EventModule, ConversationModule],
   controllers: [AppController],
   providers: [AppService],
 })

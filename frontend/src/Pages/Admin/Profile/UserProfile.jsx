@@ -242,7 +242,6 @@ const UserProfile = ({ changePassword }) => {
           </div>
         </div>
       </div>
-
       <div className="col-xl-8">
         <div className="card mb-4">
           <div className="card-header">Profile Details</div>
@@ -272,7 +271,6 @@ const UserProfile = ({ changePassword }) => {
                   onChange={handleChange}
                 />
               </div>
-              {/* Disabled Fields */}
               <div className="form-check mb-3">
                 <input
                   className="form-check-input"
@@ -353,8 +351,6 @@ const UserProfile = ({ changePassword }) => {
             </form>
           </div>
         </div>
-
-        {/* Change Password Card */}
         
       </div>
     </div>
