@@ -41,6 +41,7 @@ import DocumentList from './Pages/Admin/Documents/GetAllDocuments';
 import CreateRhEvents from './Pages/Rh/events/CreateEvents';
 import GlobalChat from './components/GlobalChat';
 import Profile from './Pages/Admin/UsersInfo/UserInfo';
+import AuditLogs from './Pages/Admin/auditLog/Auditlogs';
 
 function App() {
 const [isOpen, setOpen] = useState(true);
@@ -85,7 +86,7 @@ const [isOpen, setOpen] = useState(true);
     <Route path="/enterprises-documents" element={<EnterpriseListPage />} />
     <Route path="/enterprise/:id" element={<EnterpriseDetails/>}/>
     <Route path="/See-documents" element={<DocumentList/>}/>
-    
+    <Route path="/audit-log" element={<AuditLogs/>}/>
   </Route>
 
 

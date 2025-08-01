@@ -79,13 +79,6 @@ const { user, logout } = useContext(AuthContext);
         gap: true
       },
       {
-        title: "Settings",
-        icon: <FaGears />,
-        subMenu: ["General", "Security", "Notifications"],
-        key: "settings",
-        gap: true,
-      },
-      {
         title: "Contacts",
         icon: <BiChat />,
         subMenu: [{title: "Create Contacts", path:"/Contacts"},
@@ -124,7 +117,7 @@ const { user, logout } = useContext(AuthContext);
       {
         title: "Audit Log",
         icon: <RiFileList2Line />,
-        subMenu: ["Activity History"],
+        subMenu: [{title: "Audit Log", path:"/audit-log"}],
         key: "auditlog",
         gap: true,
       },
