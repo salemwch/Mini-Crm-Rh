@@ -39,7 +39,7 @@
     "class-validator": "^0.14.2",
     "cookie-parser": "^1.4.7",
     "googleapis": "^152.0.0",
-    "mongoose": "^8.16.1",
+    "mongoose": "^8.24.8",
     "multer": "^2.0.1",
     "nodemailer": "^7.0.5",
     "passport": "^0.7.0",
